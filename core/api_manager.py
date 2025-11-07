@@ -340,12 +340,12 @@ class ApiManager:
                                     )
                                     if quality_label == "良好":
                                         logger.info(
-                                            f"为 {type(model_provider).__name__} 通过质量检查，返回原始内容"
+                                            f"为 {type(model_provider).__name__} 通过质量检查，返回处理后的内容"
                                         )
                                         logger.debug(
-                                            f"[DEBUG_TYPE] raw_content 类型: {type(raw_content_str)}, 值: {raw_content_str[:100]}"
+                                            f"[DEBUG_TYPE] processed_content 类型: {type(processed_content_str)}, 值: {processed_content_str[:100]}"
                                         )
-                                        return raw_content_str
+                                        return processed_content_str
                                     else:
                                         logger.warning(
                                             f"为 {type(model_provider).__name__} 质量检查失败。尝试下一个模型..."

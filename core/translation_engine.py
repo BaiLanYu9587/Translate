@@ -28,8 +28,6 @@ from .context_manager import ContextManager
 from .prompt_builder import PromptBuilder
 from .api_manager import ApiManager
 
-from .quality_assessment import assess_translation_quality
-
 import threading
 
 logger = logging.getLogger(__name__)
@@ -681,9 +679,11 @@ class TranslationEngine:
             timestamp: 翻译完成的时间戳
         """
         if self.cache_manager:
+            # 获取当前翻译模式，确保不同模式的缓存独立
+            mode_id = getattr(self.config, 'translation_mode', None)
             # 调用简化后的 add_translation 方法
             self.cache_manager.add_translation(
-                original_text, target_lang, translation, source_lang
+                original_text, target_lang, translation, source_lang, mode=str(mode_id) if mode_id else None
             )
             logger.debug(
                 f"翻译结果已保存到缓存: {original_text[:50]}... -> {translation[:50]}..."
@@ -788,81 +788,47 @@ class TranslationEngine:
             mode_config=self.mode_config,
         )
 
-        # 添加类型验证日志
-        logger.debug(
-            f"[DEBUG_TYPE] translation_result type: {type(translation_result)}, value: {translation_result[:100] if isinstance(translation_result, str) else translation_result}"
-        )
+        # 安全的类型验证日志
+        if translation_result is not None:
+            result_preview = (
+                translation_result[:100] if isinstance(translation_result, str) else str(translation_result)
+            )
+            logger.debug(
+                f"[DEBUG_TYPE] translation_result type: {type(translation_result)}, value: {result_preview}"
+            )
+        else:
+            logger.debug("[DEBUG_TYPE] translation_result is None")
 
-        # 创建一个辅助函数来处理翻译结果检查，避免重复代码
+        # 验证翻译结果
         def _validate_translation_result(result: Any) -> bool:
             """验证翻译结果是否有效"""
-            return (
-                result and isinstance(result, str) and not result.startswith("翻译失败")
-            )
-
-        # 使用防御性编程进行类型检查：确保translation_result为字符串类型
-        if not _validate_translation_result(translation_result):
-            # 如果类型不正确，记录详细错误信息
-            if not isinstance(translation_result, str):
-                logger.error(
-                    f"[类型检查] translation_result类型异常: 期望str类型，实际为{type(translation_result)}"
-                )
-
-            logger.error("[重试机制] 所有尝试均失败")
-        else:
-            # API调用成功，进行质量评估
-            # 确保 translation_result 是字符串类型
-            if isinstance(translation_result, str):
-                quality_label, quality_score, quality_issues = (
-                    assess_translation_quality(
-                        original_text,
-                        translation_result,
-                        detected_lang,
-                        target_lang_code,
-                        self.config,
-                        self.mode_config,
-                        context_history,
-                    )
-                )
-
-                logger.info(
-                    f"翻译质量评估: {quality_label} (得分: {quality_score:.2f}), "
-                    f"问题: {quality_issues if quality_issues else '无'}"
-                )
-
-                if quality_label != "良好":
-                    logger.warning(
-                        f"翻译质量为 '{quality_label}'，但已无更多API可重试。"
-                    )
-            else:
-                logger.error(
-                    f"质量评估时翻译结果类型异常: 期望 str 类型，实际为 {type(translation_result)}"
-                )
-                # 设置默认的低质量评估结果
-                quality_label, quality_score, quality_issues = "较差", 0.0, ["类型错误"]
+            if result is None:
+                return False
+            if not isinstance(result, str):
+                return False
+            if result.startswith("翻译失败"):
+                return False
+            if not result.strip():
+                return False
+            return True
 
         # 处理翻译结果
         if _validate_translation_result(translation_result):
             translation_source = "api"
-            # 确保 translation_result 是字符串类型
-            if isinstance(translation_result, str):
-                # 保存到缓存
-                await self.save_to_cache(
-                    original_text, target_lang_code, detected_lang, translation_result
-                )
+            # _validate_translation_result 已确保 translation_result 是有效的字符串
+            # _validate_translation_result 也确保 detected_lang 不是 None
+            # 保存到缓存（包含mode参数以区分不同翻译模式）
+            await self.save_to_cache(
+                original_text, target_lang_code, detected_lang, translation_result  # type: ignore[arg-type]  # validated above
+            )
 
-                # 确定翻译方向并添加到上下文历史
-                # 使用从 determine_translation_direction 获取的权威方向
-                # 使用从 determine_translation_direction 获取的权威方向
-                self.add_to_history(
-                    mode_id, original_text, translation_result, direction
-                )
-                logger.info(f"翻译结果已添加到模式 {mode_id} 的上下文历史")
-            else:
-                logger.error(
-                    f"翻译结果类型异常: 期望 str 类型，实际为 {type(translation_result)}"
-                )
-                translation_source = "error"
+            # 确定翻译方向并添加到上下文历史
+            # 使用从 determine_translation_direction 获取的权威方向
+            # 使用从 determine_translation_direction 获取的权威方向
+            self.add_to_history(
+                mode_id, original_text, translation_result, direction  # type: ignore[arg-type]  # validated above
+            )
+            logger.info(f"翻译结果已添加到模式 {mode_id} 的上下文历史")
         else:
             translation_source = "error"
 

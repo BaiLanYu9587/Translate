@@ -1286,7 +1286,8 @@ class TranslatorInterface:
             # 处理翻译结果：仅当来源明确为 API 或缓存，且未被中止时，才视为成功
             if (
                 translation_source in ("api", "cache")
-                and result
+                and result is not None
+                and result != ""
                 and result != "翻译已中止"
             ):
                 # 翻译成功：先全选当前内容，再粘贴翻译结果
