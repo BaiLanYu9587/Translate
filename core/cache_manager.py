@@ -38,12 +38,18 @@ class SimpleLRUCache:
                 del self.cache[key]
         return None
 
-    def put(self, key: str, value: str) -> None:
-        """设置缓存项"""
-        current_time = time.time()
+    def put(self, key: str, value: str, timestamp: Optional[float] = None) -> None:
+        """设置缓存项
+        
+        Args:
+            key: 缓存键
+            value: 缓存值
+            timestamp: 可选的时间戳，如果不提供则使用当前时间
+        """
+        use_timestamp = timestamp if timestamp is not None else time.time()
         if key in self.cache:
             self.cache.move_to_end(key)
-        self.cache[key] = (value, current_time)
+        self.cache[key] = (value, use_timestamp)
 
         # LRU清理：超过最大容量时移除最旧的
         if len(self.cache) > self.max_size:
@@ -149,8 +155,8 @@ class CacheManager:
                     )
                     loaded_count = 0
                     for key, value, timestamp in cursor:
-                        # 数据库查询已经过滤了过期数据，这里只需要存储
-                        self.memory_cache.put(key, value)
+                        # 保留原始时间戳，避免TTL被重置
+                        self.memory_cache.put(key, value, timestamp)
                         loaded_count += 1
 
                     logger.info(f"从数据库加载 {loaded_count} 条未过期缓存")
@@ -194,36 +200,35 @@ class CacheManager:
             reverse_key = self.generate_key(translation, source_lang, target_lang, mode)
             reverse_data = (reverse_key, text, current_time)
 
-        # 原子性存储：要么全部成功，要么全部失败
-        try:
-            # 1. 先存储到内存
-            self.memory_cache.put(forward_key, translation)
-            if reverse_data and reverse_key:
-                self.memory_cache.put(reverse_key, text)
-
-            # 2. 再存储到数据库
-            self._save_to_database(forward_key, translation, current_time)
-            if reverse_data and reverse_key:
-                self._save_to_database(reverse_key, text, current_time)
-
-            logger.debug("[缓存存储] 正向+反向双向存储完成，包含磁盘持久化")
-
-        except Exception as e:
-            # 如果数据库存储失败，回滚内存中的更改
+        # 使用线程锁保护整个操作，确保原子性
+        with self._lock:
             try:
-                if forward_key in self.memory_cache.cache:
-                    del self.memory_cache.cache[forward_key]
-                    self.memory_cache.cache.move_to_end(forward_key)
-                if reverse_data and reverse_key in self.memory_cache.cache:
-                    if reverse_key is not None:
-                        del self.memory_cache.cache[reverse_key]
-                    if reverse_key is not None:
-                        self.memory_cache.cache.move_to_end(reverse_key)
-            except Exception as rollback_error:
-                logger.error(f"回滚内存缓存失败: {rollback_error}")
+                # 1. 先存储到内存
+                self.memory_cache.put(forward_key, translation)
+                if reverse_data and reverse_key:
+                    self.memory_cache.put(reverse_key, text)
 
-            logger.error(f"缓存存储失败，已回滚更改: {e}")
-            raise  # 重新抛出异常，让调用方知道存储失败
+                # 2. 再存储到数据库
+                self._save_to_database(forward_key, translation, current_time)
+                if reverse_data and reverse_key:
+                    self._save_to_database(reverse_key, text, current_time)
+
+                logger.debug("【缓存存储】 正向+反向双向存储完成，包含磁盘持久化")
+
+            except Exception as e:
+                # 如果数据库存储失败，回滚内存中的更改
+                try:
+                    # 删除已添加到内存的项
+                    if forward_key in self.memory_cache.cache:
+                        del self.memory_cache.cache[forward_key]
+                    if reverse_key and reverse_key in self.memory_cache.cache:
+                        del self.memory_cache.cache[reverse_key]
+                    logger.debug("已回滚内存缓存更改")
+                except Exception as rollback_error:
+                    logger.error(f"回滚内存缓存失败: {rollback_error}")
+
+                logger.error(f"缓存存储失败，已回滚更改: {e}")
+                raise  # 重新抛出异常，让调用方知道存储失败
 
     def clear_all_cache(self) -> None:
         """清除所有缓存，包括内存和数据库"""

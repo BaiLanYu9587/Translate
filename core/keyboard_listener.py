@@ -299,13 +299,14 @@ class KeyboardListener:
             if self.is_in_cooldown(current_time):
                 return
 
-            # 检测到足够的空格键，尝试触发翻译
+            # 检测到足够的空格键,尝试触发翻译
             if self.space_count >= self.required_space_count:
                 self.space_count = 0
-                self.last_trigger_time = current_time
 
                 # 检查是否可以触发翻译
                 if self.can_trigger_translation():
+                    # 只有在真正触发翻译时才更新冷却时间
+                    self.last_trigger_time = current_time
                     self.trigger_translation()
 
         except Exception as e:
