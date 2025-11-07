@@ -48,8 +48,16 @@ jobs:
         echo "Version: $version"
       shell: pwsh
     
+    - name: Force UTF-8 console
+      shell: pwsh
+      run: |
+        chcp 65001 > $null
+        [Console]::InputEncoding  = [System.Text.Encoding]::UTF8
+        [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+
     - name: Build executables
-      run: python build.py
+      shell: pwsh
+      run: python -X utf8 build.py
     
     - name: List build artifacts
       run: |

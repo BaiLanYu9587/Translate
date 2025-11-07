@@ -12,16 +12,16 @@ import shutil
 from pathlib import Path
 import locale
 
-# 设置输出编码为 UTF-8
+# 设置输出编码为 UTF-8（CI/Windows 环境下强制 UTF-8，避免 UnicodeEncodeError）
 if sys.platform == 'win32':
     try:
-        sys.stdout.reconfigure(encoding='utf-8')
-        sys.stderr.reconfigure(encoding='utf-8')
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+        sys.stderr.reconfigure(encoding='utf-8', errors='replace')
     except Exception:
-        # 如果 reconfigure 失败，尝试设置环境变量
+        # 如果 reconfigure 失败，使用 TextIOWrapper 包装并启用替代字符
         import io
-        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
 # 获取脚本所在目录（项目根目录）
 PROJECT_ROOT = Path(__file__).parent.absolute()
