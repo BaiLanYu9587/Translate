@@ -12,7 +12,7 @@ import threading
 from typing import Optional, Tuple
 from collections import OrderedDict
 import pathlib
-import xxhash
+import xxhash  # type: ignore[import-untyped]
 
 from core.config_management import Config, get_cache_file_path
 
@@ -189,6 +189,7 @@ class CacheManager:
         forward_key = self.generate_key(text, target_lang, source_lang, mode)
 
         reverse_data = None
+        reverse_key = None  # type: ignore[assignment]
         if source_lang:
             reverse_key = self.generate_key(translation, source_lang, target_lang, mode)
             reverse_data = (reverse_key, text, current_time)

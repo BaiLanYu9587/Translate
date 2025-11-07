@@ -7,7 +7,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import List, Tuple, Any, Dict
 import re  # 新增
-import aiofiles  # 导入 aiofiles
+import aiofiles  # type: ignore[import-untyped]  # 导入 aiofiles
 
 logger = logging.getLogger(__name__)
 

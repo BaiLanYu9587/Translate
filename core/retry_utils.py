@@ -2,8 +2,8 @@ import asyncio
 import logging
 from typing import Any, Callable
 
-import aiohttp
-from tenacity import (
+import aiohttp  # type: ignore[import-untyped]
+from tenacity import (  # type: ignore[import-untyped]
     retry,
     stop_after_attempt,
     wait_exponential,

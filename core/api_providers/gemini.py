@@ -5,7 +5,7 @@ import time
 import re
 from typing import Dict, Any, Optional
 
-import aiohttp
+import aiohttp  # type: ignore[import-untyped]
 from .base import ApiProvider
 from ..text_utils import clean_illegal_chars
 from ..constants import HTTP_STATUS_CODE_MESSAGES, format_error_message
@@ -61,6 +61,9 @@ class GeminiProvider(ApiProvider):
         logger.debug(
             f"开始调用 {api_name} 兼容 API，模型: {model_id}, 重试: {is_retry}"
         )
+
+        # 初始化response变量以避免未绑定错误
+        response = None
 
         try:
             # Correctly construct the URL using the api_base from config
@@ -390,7 +393,9 @@ class GeminiProvider(ApiProvider):
                 except Exception as read_exc:
                     logger.error(f"在超时后尝试读取响应内容时发生错误: {read_exc}")
             else:
-                logger.error(f"调用 {api_name} API时发生超时。可能是在建立连接或发送请求时。")
+                logger.error(
+                    f"调用 {api_name} API时发生超时。可能是在建立连接或发送请求时。"
+                )
 
             error_msg = format_error_message(
                 "API_TIMEOUT", provider=api_name, details=error_details

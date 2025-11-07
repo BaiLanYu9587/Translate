@@ -22,10 +22,10 @@ if sys.platform == "win32":
     os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
     os.environ["QT_SCALE_FACTOR"] = "1"
 
-import pyautogui
-import pyperclip
-from PyQt6.QtWidgets import QApplication
-from ruamel.yaml import YAML
+import pyautogui  # type: ignore[import-untyped]
+import pyperclip  # type: ignore[import-untyped]
+from PyQt6.QtWidgets import QApplication  # type: ignore[import-untyped]
+from ruamel.yaml import YAML  # type: ignore[import-untyped]
 
 from .async_utils import AsyncLoopThread
 

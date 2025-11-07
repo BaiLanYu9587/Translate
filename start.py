@@ -109,10 +109,14 @@ def setup_openssl_dll_path() -> None:
                 dll_files = [ssl_name, crypto_name]
 
                 # 检查目标文件是否都已存在
-                all_exist = all(os.path.isfile(os.path.join(extracted_dir, f)) for f in dll_files)
+                all_exist = all(
+                    os.path.isfile(os.path.join(extracted_dir, f)) for f in dll_files
+                )
 
                 if not all_exist:
-                    logger.info(f"检测到 {extracted_dir} 不完整，将从程序内部解压 OpenSSL 库。")
+                    logger.info(
+                        f"检测到 {extracted_dir} 不完整，将从程序内部解压 OpenSSL 库。"
+                    )
                     os.makedirs(extracted_dir, exist_ok=True)
 
                     for dll_name in dll_files:
@@ -124,14 +128,20 @@ def setup_openssl_dll_path() -> None:
                                 shutil.copy2(src_path, dest_path)
                                 logger.info(f"已解压 {dll_name} 到程序目录。")
                             except Exception as copy_err:
-                                logger.warning(f"解压 {dll_name} 失败: {copy_err}。将使用内存中的版本。")
-                
+                                logger.warning(
+                                    f"解压 {dll_name} 失败: {copy_err}。将使用内存中的版本。"
+                                )
+
                 # 如果最终所有文件都存在于外部目录，则优先使用它
-                if all(os.path.isfile(os.path.join(extracted_dir, f)) for f in dll_files):
+                if all(
+                    os.path.isfile(os.path.join(extracted_dir, f)) for f in dll_files
+                ):
                     logger.info(f"将优先使用位于程序目录的 OpenSSL 库: {extracted_dir}")
                     openssl_dir = extracted_dir
                 else:
-                    logger.warning(f"无法在程序目录创建完整的 OpenSSL 库，将使用内存中的临时版本。")
+                    logger.warning(
+                        "无法在程序目录创建完整的 OpenSSL 库，将使用内存中的临时版本。"
+                    )
 
     except Exception as extract_err:
         logger.warning(f"处理 OpenSSL DLL 解压逻辑时发生错误: {extract_err}")

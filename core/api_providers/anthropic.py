@@ -4,7 +4,7 @@ import logging
 import time
 from typing import Dict, Any, Optional
 
-import aiohttp
+import aiohttp  # type: ignore[import-untyped]
 from .base import ApiProvider
 from ..text_utils import clean_illegal_chars
 from ..constants import HTTP_STATUS_CODE_MESSAGES, format_error_message
@@ -258,7 +258,9 @@ class AnthropicProvider(ApiProvider):
                 except Exception as read_exc:
                     logger.error(f"在超时后尝试读取响应内容时发生错误: {read_exc}")
             else:
-                logger.error("调用Anthropic API时发生超时。可能是在建立连接或发送请求时。")
+                logger.error(
+                    "调用Anthropic API时发生超时。可能是在建立连接或发送请求时。"
+                )
 
             error_msg = format_error_message(
                 "API_TIMEOUT", provider="Anthropic", details=error_details

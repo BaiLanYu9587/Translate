@@ -4,7 +4,7 @@ import logging
 import time
 from typing import Dict, Any, Optional
 
-import aiohttp
+import aiohttp  # type: ignore[import-untyped]
 from .base import ApiProvider
 from ..text_utils import clean_illegal_chars
 from ..constants import HTTP_STATUS_CODE_MESSAGES, format_error_message
@@ -50,6 +50,9 @@ class OpenAIProvider(ApiProvider):
         retry_decorator = create_retry_decorator(self.config)
 
         logger.debug(f"开始调用OpenAI API，模型: {model_id}, 重试: {is_retry}")
+
+        # 初始化response变量以避免未绑定错误
+        response = None
 
         try:
             url = self.api_base

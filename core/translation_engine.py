@@ -4,7 +4,7 @@
 """
 
 import asyncio
-import aiohttp
+import aiohttp  # type: ignore[import-untyped]
 import time
 import logging
 import collections
@@ -13,7 +13,7 @@ from typing import Dict, Optional, Any
 
 
 # 引入 tenacity 用于重试
-from tenacity import (
+from tenacity import (  # type: ignore[import-untyped]
     retry,
     stop_after_attempt,
     wait_exponential,
@@ -680,10 +680,14 @@ class TranslationEngine:
         """
         if self.cache_manager:
             # 获取当前翻译模式，确保不同模式的缓存独立
-            mode_id = getattr(self.config, 'translation_mode', None)
+            mode_id = getattr(self.config, "translation_mode", None)
             # 调用简化后的 add_translation 方法
             self.cache_manager.add_translation(
-                original_text, target_lang, translation, source_lang, mode=str(mode_id) if mode_id else None
+                original_text,
+                target_lang,
+                translation,
+                source_lang,
+                mode=str(mode_id) if mode_id else None,
             )
             logger.debug(
                 f"翻译结果已保存到缓存: {original_text[:50]}... -> {translation[:50]}..."
@@ -791,7 +795,9 @@ class TranslationEngine:
         # 安全的类型验证日志
         if translation_result is not None:
             result_preview = (
-                translation_result[:100] if isinstance(translation_result, str) else str(translation_result)
+                translation_result[:100]
+                if isinstance(translation_result, str)
+                else str(translation_result)
             )
             logger.debug(
                 f"[DEBUG_TYPE] translation_result type: {type(translation_result)}, value: {result_preview}"
@@ -819,14 +825,20 @@ class TranslationEngine:
             # _validate_translation_result 也确保 detected_lang 不是 None
             # 保存到缓存（包含mode参数以区分不同翻译模式）
             await self.save_to_cache(
-                original_text, target_lang_code, detected_lang, translation_result  # type: ignore[arg-type]  # validated above
+                original_text,
+                target_lang_code,
+                detected_lang,
+                translation_result,  # type: ignore[arg-type]  # validated above
             )
 
             # 确定翻译方向并添加到上下文历史
             # 使用从 determine_translation_direction 获取的权威方向
             # 使用从 determine_translation_direction 获取的权威方向
             self.add_to_history(
-                mode_id, original_text, translation_result, direction  # type: ignore[arg-type]  # validated above
+                mode_id,
+                original_text,
+                translation_result,  # type: ignore[arg-type]  # validated above by _validate_translation_result
+                direction,  # type: ignore[arg-type]  # validated above by _validate_translation_result
             )
             logger.info(f"翻译结果已添加到模式 {mode_id} 的上下文历史")
         else:

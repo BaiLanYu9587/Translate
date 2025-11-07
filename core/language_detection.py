@@ -541,14 +541,19 @@ def detect_language_internal(
     # 通用误判校正：当pycld2的结果与特征检测冲突时，惩罚pycld2的结果
     if main_results and feature_results:
         pycld2_top_lang = main_results[0]["lang"]
-        
+
         # 检查pycld2的首选语言是否通过了自身的特征检测
-        pycld2_lang_has_features = feature_results.get(pycld2_top_lang, {}).get("matches", False)
+        pycld2_lang_has_features = feature_results.get(pycld2_top_lang, {}).get(
+            "matches", False
+        )
 
         # 寻找其他通过了特征检测的语言
         other_feature_matches = [
-            lang for lang, res in feature_results.items()
-            if res.get("matches") and not res.get("excludes_violated") and lang != pycld2_top_lang
+            lang
+            for lang, res in feature_results.items()
+            if res.get("matches")
+            and not res.get("excludes_violated")
+            and lang != pycld2_top_lang
         ]
 
         # 如果pycld2的结果没有通过特征检测，而其他语言通过了，则判定为冲突
@@ -562,7 +567,6 @@ def detect_language_internal(
             # 重新排序
             main_results.sort(key=lambda x: x["prob"], reverse=True)
             logger.debug(f"[{current_thread_name}] 惩罚后pycld2结果: {main_results}")
-
 
     combined_results = combine_detection_results(
         main_results, feature_results, prob_weight, feature_weight
