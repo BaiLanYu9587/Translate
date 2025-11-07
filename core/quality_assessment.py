@@ -6,8 +6,8 @@ import collections
 import logging
 from typing import Any, Dict, List, Optional, Tuple
 
-import regex  # type: ignore[import-untyped]
-from rapidfuzz import fuzz  # type: ignore[import-untyped]
+import regex
+from rapidfuzz import fuzz  # type: ignore[import-not-found]
 
 from .constants import TokenizationConstants, TranslationConstants
 from .rules_engine import find_best_matching_rule, get_language_group

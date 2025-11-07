@@ -4,7 +4,7 @@ import logging
 import time
 from typing import Dict, Any, Optional
 
-import aiohttp  # type: ignore[import-untyped]
+import aiohttp
 from .base import ApiProvider
 from ..text_utils import clean_illegal_chars
 from ..constants import HTTP_STATUS_CODE_MESSAGES, format_error_message
@@ -127,7 +127,7 @@ class OpenAIProvider(ApiProvider):
                     timeout=aiohttp.ClientTimeout(total=float(api_timeout)),
                 )
 
-            response: Optional[aiohttp.ClientResponse] = None
+
             try:
                 response = await _openai_api_request()
                 if gui_handler and hasattr(gui_handler, "update_progress_indicator"):

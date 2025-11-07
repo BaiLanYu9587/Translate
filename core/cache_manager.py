@@ -12,7 +12,7 @@ import threading
 from typing import Optional, Tuple
 from collections import OrderedDict
 import pathlib
-import xxhash  # type: ignore[import-untyped]
+import xxhash
 
 from core.config_management import Config, get_cache_file_path
 
@@ -109,7 +109,7 @@ class CacheManager:
         if mode:
             parts.append(mode)
         combined_string = "_".join(str(p) for p in parts if p is not None)
-        return xxhash.xxh64(combined_string.encode("utf-8")).hexdigest()
+        return str(xxhash.xxh64(combined_string.encode("utf-8")).hexdigest())
 
     def get_translation(
         self,
@@ -189,7 +189,7 @@ class CacheManager:
         forward_key = self.generate_key(text, target_lang, source_lang, mode)
 
         reverse_data = None
-        reverse_key = None  # type: ignore[assignment]
+        reverse_key = None
         if source_lang:
             reverse_key = self.generate_key(translation, source_lang, target_lang, mode)
             reverse_data = (reverse_key, text, current_time)
@@ -215,8 +215,10 @@ class CacheManager:
                     del self.memory_cache.cache[forward_key]
                     self.memory_cache.cache.move_to_end(forward_key)
                 if reverse_data and reverse_key in self.memory_cache.cache:
-                    del self.memory_cache.cache[reverse_key]
-                    self.memory_cache.cache.move_to_end(reverse_key)
+                    if reverse_key is not None:
+                        del self.memory_cache.cache[reverse_key]
+                    if reverse_key is not None:
+                        self.memory_cache.cache.move_to_end(reverse_key)
             except Exception as rollback_error:
                 logger.error(f"回滚内存缓存失败: {rollback_error}")
 

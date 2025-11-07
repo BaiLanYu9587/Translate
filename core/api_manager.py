@@ -1,7 +1,7 @@
 import logging
 import time
 import asyncio
-import aiohttp  # type: ignore[import-untyped]
+import aiohttp
 from typing import Dict, Optional, Any, List
 
 from .network_utils import create_ssl_context

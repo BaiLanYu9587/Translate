@@ -5,7 +5,7 @@ import time
 import re
 from typing import Dict, Any, Optional
 
-import aiohttp  # type: ignore[import-untyped]
+import aiohttp
 from .base import ApiProvider
 from ..text_utils import clean_illegal_chars
 from ..constants import HTTP_STATUS_CODE_MESSAGES, format_error_message

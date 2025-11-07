@@ -3,17 +3,17 @@
 提供多种语言检测算法和决策逻辑
 """
 
-import regex  # type: ignore[import-untyped]
+import regex
 import logging
 import os
 import threading
 import json
 from collections import OrderedDict
 from typing import Dict, List, Optional, Any, TypedDict
-import xxhash  # type: ignore[import-untyped]
+import xxhash
 import pycld2 as cld2  # type: ignore[import-untyped]
 
-import yaml  # type: ignore[import-untyped]
+import yaml
 from .config_management import (
     get_config_file_path,
     get_mode_config_file_path,
@@ -103,7 +103,7 @@ def compile_language_patterns(
     Returns:
         Dict[str, Dict[str, Any]]: 编译后的模式字典
     """
-    import regex  # type: ignore[import-untyped]
+    import regex
 
     compiled_patterns: Dict[str, Dict[str, Any]] = {}
 
@@ -406,7 +406,7 @@ def detect_language_with_cache(
                     config_dict["_extra_params"] = extra_params
 
             config_str = json.dumps(config_dict, sort_keys=True)
-            return xxhash.xxh64(config_str.encode("utf-8")).hexdigest()
+            return str(xxhash.xxh64(config_str.encode("utf-8")).hexdigest())
         except (TypeError, AttributeError, Exception) as e:
             logger.warning(
                 f"无法为语言检测配置生成稳定哈希: {e}，使用配置类名和关键参数"
@@ -422,7 +422,7 @@ def detect_language_with_cache(
                     stable_fallback += f"_{config_obj.cache_max_entries}"
             except Exception:
                 pass  # 如果访问失败，保持基础fallback
-            return xxhash.xxh64(stable_fallback.encode("utf-8")).hexdigest()
+            return str(xxhash.xxh64(stable_fallback.encode("utf-8")).hexdigest())
 
     text_hash = xxhash.xxh64(text.encode("utf-8")).hexdigest()
     config_hash = get_stable_config_hash(config)
@@ -543,9 +543,8 @@ def detect_language_internal(
         pycld2_top_lang = main_results[0]["lang"]
 
         # 检查pycld2的首选语言是否通过了自身的特征检测
-        pycld2_lang_has_features = feature_results.get(pycld2_top_lang, {}).get(
-            "matches", False
-        )
+        lang_data = feature_results.get(pycld2_top_lang)
+        pycld2_lang_has_features = lang_data.get("matches") if lang_data else False  # type: ignore[arg-type]
 
         # 寻找其他通过了特征检测的语言
         other_feature_matches = [

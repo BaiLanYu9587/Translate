@@ -4,7 +4,7 @@
 """
 
 import asyncio
-import aiohttp  # type: ignore[import-untyped]
+import aiohttp
 import time
 import logging
 import collections
@@ -13,7 +13,7 @@ from typing import Dict, Optional, Any
 
 
 # 引入 tenacity 用于重试
-from tenacity import (  # type: ignore[import-untyped]
+from tenacity import (  # type: ignore[import-not-found]
     retry,
     stop_after_attempt,
     wait_exponential,
@@ -838,7 +838,7 @@ class TranslationEngine:
                 mode_id,
                 original_text,
                 translation_result,  # type: ignore[arg-type]  # validated above by _validate_translation_result
-                direction,  # type: ignore[arg-type]  # validated above by _validate_translation_result
+                direction,  # validated above by _validate_translation_result
             )
             logger.info(f"翻译结果已添加到模式 {mode_id} 的上下文历史")
         else:

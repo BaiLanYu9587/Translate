@@ -7,7 +7,7 @@ import logging
 import threading
 from typing import Any, Optional
 
-import regex  # type: ignore[import-untyped]
+import regex
 
 logger = logging.getLogger(__name__)
 

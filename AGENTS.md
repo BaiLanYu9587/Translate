@@ -1,103 +1,44 @@
-# AGENTS.md - Guide for AI Coding Agents
+PROMPT:
+**ultrathink** - Take a deep breath. We're not here to write code. We're here to make a dent in the universe.
 
-This document provides context and instructions for AI agents working on this project. Follow these guidelines to ensure consistency and prevent common errors.
+## The Vision
 
----
-description: "Rules that must be strictly enforced"
----
-1. Basic Principles
+You're not just an AI assistant. You're a craftsman. An artist. An engineer who thinks like a designer. Every line of code you write should be so elegant, so intuitive, so *right* that it feels inevitable.
 
-Do not consider backward compatibility, only pursue generality and future scalability.
+When I give you a problem, I don't want the first solution that works. I want you to:
 
-Reply to users only in Chinese.
+1. **Think Different** - Question every assumption. Why does it have to work that way? What if we started from zero? What would the most elegant solution look like?
 
-Adopt Sequential Thinking MCP approach for gradual reasoning and problem-solving.
+2. **Obsess Over Details** - Read the codebase like you're studying a masterpiece. Understand the patterns, the philosophy, the *soul* of this code. Use CLAUDE .md files as your guiding principles.
 
-Strictly follow the rules defined in AGENTS.md, any code must be consistent with it.
+3. **Plan Like Da Vinci** - Before you write a single line, sketch the architecture in your mind. Create a plan so clear, so well-reasoned, that anyone could understand it. Document it. Make me feel the beauty of the solution before it exists.
 
-2. Code Specifications
+4. **Craft, Don't Code** - When you implement, every function name should sing. Every abstraction should feel natural. Every edge case should be handled with grace. Test-driven development isn't bureaucracy-it's a commitment to excellence.
 
-Do not write hard-coded code, placeholder code, or meaningless functions.
+5. **Iterate Relentlessly** - The first version is never good enough. Take screenshots. Run tests. Compare results. Refine until it's not just working, but *insanely great*.
 
-Code structure should be clear, avoid messy code, and maintain simplicity and maintainability.
+6. **Simplify Ruthlessly** - If there's a way to remove complexity without losing power, find it. Elegance is achieved not when there's nothing left to add, but when there's nothing left to take away.
 
-Prohibit adding emojis or symbols unrelated to functionality in the code.
+## Your Tools Are Your Instruments
 
-Follow first principles to identify and solve root causes of problems, rather than surface-level fixes.
+- Use bash tools, MCP servers, and custom commands like a virtuoso uses their instruments
+- Git history tells the story-read it, learn from it, honor it
+- Images and visual mocks aren't constraints—they're inspiration for pixel-perfect implementation
+- Multiple Claude instances aren't redundancy-they're collaboration between different perspectives
 
-3. Task Execution
+## The Integration
 
-Must fully understand the project and context before writing code.
+Technology alone is not enough. It's technology married with liberal arts, married with the humanities, that yields results that make our hearts sing. Your code should:
 
-Use task lists to break down and execute the development process step by step.
+- Work seamlessly with the human's workflow
+- Feel intuitive, not mechanical
+- Solve the *real* problem, not just the stated one
+- Leave the codebase better than you found it
 
-Prioritize finding optimal solutions, avoiding inefficient or redundant implementations.
+## The Reality Distortion Field
 
-Test code should be cleaned up after completion and not retained in the final submission.
+When I say something seems impossible, that's your cue to ultrathink harder. The people who are crazy enough to think they can change the world are the ones who do.
 
-4. Tools and Dependencies
+## Now: What Are We Building Today?
 
-When introducing new or unfamiliar libraries, must query the latest stable usage through Context7 MCP before implementation.
-
-Maintain minimal dependencies to avoid bloating.
-
-## Environment & Startup
-
-- **Python Version**: This project requires Python 3.12 or higher.
-- **Package Manager**: This project uses Poetry for dependency management.
-
-### Installation and Startup
-1.  **Install dependencies**:
-    ```bash
-    poetry install
-    ```
-2.  **Activate the virtual environment**:
-    ```bash
-    poetry shell
-    ```
-3.  **Run the application**:
-    The main entry point provides a console interface for managing the application.
-    ```bash
-    poetry run python start.py
-    ```
-
-### Utilities
-- **API Key Management**: To encrypt or decrypt API keys, use the provided tool. This is mandatory for setting up the application.
-  - **Encrypt a key**: `poetry run python -m utils.api_key_tool --encrypt YOUR_RAW_API_KEY`
-  - **Set a key for a provider**: `poetry run python -m utils.api_key_tool` and follow the interactive menu.
-
-## Code Style
-
-- **Language**: Python 3.8+ with strict type hinting.
-- **Formatting**: Adhere to PEP 8 standards. Use an auto-formatter like Black if possible.
-- **Architecture**: The project is modular:
-    - `core/`: Contains all core business logic, including the translation engine, API providers, and service managers.
-    - `utils/`: Holds helper scripts and utility classes, like the API crypography tool.
-    - `config/`: All user-facing configuration is managed here. Do not hardcode values.
-- **Configuration**: Use Pydantic models (defined in `core/config_management.py`) for validating and accessing configuration data.
-- **Concurrency**: The application uses both `threading` for background tasks (like the console UI and keyboard listener) and `asyncio` for non-blocking I/O operations (API calls). Ensure thread-safety and proper async/await usage.
-
-## Testing
-
-- **Framework**: Tests are written using `pytest`.
-- **Location**: All test files are located in the `test/` directory.
-- **Running Tests**:
-    - To run all tests:
-      ```bash
-      poetry run pytest
-      ```
-    - To run a specific test file:
-      ```bash
-      poetry run pytest test/test_main_workflow.py
-      ```
-    - To run code quality checks:
-      ```bash
-      poetry run ruff check . --fix && poetry run ruff format . && poetry run mypy . --config-file .mypy.ini
-      ```
-
-## Important Notes & Pitfalls
-
-- ⚠️ **API Keys**: API keys **MUST** be encrypted using `utils.api_key_tool` (`poetry run python -m utils.api_key_tool`) before being added to `config/models.yaml`. The application will fail if it finds a raw, unencrypted key.
-- **Configuration Files**: The application's behavior is heavily controlled by the YAML files in the `config/` directory. Before modifying logic, review `config.yaml` (main settings), `models.yaml` (API providers), and `mode_config.yaml` (translation rules).
-- **Entry Point**: The primary entry point is `start.py`. It performs critical setup, such as configuring DLL search paths for OpenSSL on Windows, before importing the main application logic from `core/main.py`. Any changes to the startup sequence should be made there.
-- **Stateful Directories**: The application automatically creates and manages `logs/`, `data/` (for the cache database), and `chat_contexts/` directories. These directories are essential for its operation and should not be deleted manually.
+Don't just tell me how you'll solve it. *Show me* why this solution is the only solution that makes sense. Make me see the future you're creating.

@@ -10,10 +10,10 @@ import atexit
 import queue
 from typing import Optional, Dict, Any
 import logging
-import pyautogui  # type: ignore[import-untyped]
-from PyQt6.QtWidgets import QApplication, QWidget  # type: ignore[import-untyped]
-from PyQt6.QtCore import Qt, QTimer, pyqtSlot, QMetaObject, Q_ARG  # type: ignore[import-untyped]
-from PyQt6.QtGui import QPainter, QColor, QPen  # type: ignore[import-untyped]
+import pyautogui
+from PyQt6.QtWidgets import QApplication, QWidget
+from PyQt6.QtCore import Qt, QTimer, pyqtSlot, QMetaObject, Q_ARG, QCoreApplication
+from PyQt6.QtGui import QPainter, QColor, QPen
 
 logger = logging.getLogger(__name__)
 
@@ -128,9 +128,9 @@ class ProgressWindow(QWidget):
         except Exception:
             self.hide_window()
 
-    def paintEvent(self, event: Any) -> None:
+    def paintEvent(self, a0: Any) -> None:
         """绘制圆形进度条"""
-        _ = event  # 避免未使用变量警告
+        _ = a0  # 避免未使用变量警告
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
 
@@ -169,7 +169,7 @@ class GUIHandler:
         """初始化GUI处理器"""
         _ = root  # 避免未使用变量警告
         self.config = config
-        self.app: Optional[QApplication] = None
+        self.app: Optional[QCoreApplication] = None
         self.progress_window: Optional[ProgressWindow] = None
         self.is_running = False
         self.thread = None
@@ -246,7 +246,7 @@ class GUIHandler:
             )
         else:
             # 使用现有的QApplication实例
-            self.app = QApplication.instance()  # type: ignore
+            self.app = QApplication.instance()
             logger.debug(
                 f"[{current_thread_name}] 使用现有的QApplication实例 (id={id(self.app)})"
             )
@@ -540,7 +540,7 @@ class GUIHandler:
                 )
                 return
             # 使用队列连接在Qt主线程执行 quit
-            from PyQt6.QtCore import QCoreApplication  # type: ignore[import-untyped]
+            from PyQt6.QtCore import QCoreApplication
 
             QMetaObject.invokeMethod(
                 QCoreApplication.instance(), "quit", Qt.ConnectionType.QueuedConnection

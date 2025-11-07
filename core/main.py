@@ -22,10 +22,9 @@ if sys.platform == "win32":
     os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
     os.environ["QT_SCALE_FACTOR"] = "1"
 
-import pyautogui  # type: ignore[import-untyped]
-import pyperclip  # type: ignore[import-untyped]
-from PyQt6.QtWidgets import QApplication  # type: ignore[import-untyped]
-from ruamel.yaml import YAML  # type: ignore[import-untyped]
+import pyautogui
+import pyperclip
+from ruamel.yaml import YAML
 
 from .async_utils import AsyncLoopThread
 
@@ -981,6 +980,7 @@ class TranslationApp:
 
             # 启动PyQt6事件循环以支持GUI显示
             try:
+                from PyQt6.QtWidgets import QApplication
                 app = QApplication.instance()
                 if app is None:
                     # 如果没有实例，可以创建一个，但这通常不应该发生
