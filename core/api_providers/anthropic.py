@@ -243,7 +243,7 @@ class AnthropicProvider(ApiProvider):
         except asyncio.TimeoutError:
             error_details = ""
             # 检查 response 对象是否已创建且包含状态信息
-            if response and hasattr(response, "status"):
+            if 'response' in locals() and response and hasattr(response, "status"):
                 error_details = f"状态码: {response.status}, 响应头: {response.headers}"
                 logger.error(
                     f"调用Anthropic API时发生超时。可能是在读取响应体时。{error_details}"

@@ -2,14 +2,14 @@ import os
 import sys
 import threading
 import logging
-import yaml
-from ruamel.yaml import YAML
-from ruamel.yaml.scalarstring import PreservedScalarString
+import yaml  # type: ignore[import-untyped]
+from ruamel.yaml import YAML  # type: ignore[import-untyped]
+from ruamel.yaml.scalarstring import PreservedScalarString  # type: ignore[import-untyped]
 from typing import Dict, Any, Union, Optional, TypeVar, overload
 import io
 from functools import lru_cache
-from pydantic import BaseModel, Field
-from pydantic.root_model import RootModel
+from pydantic import BaseModel, Field  # type: ignore[import-untyped]
+from pydantic.root_model import RootModel  # type: ignore[import-untyped]
 
 _T = TypeVar("_T")
 

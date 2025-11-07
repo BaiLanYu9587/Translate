@@ -148,7 +148,6 @@ class GeminiProvider(ApiProvider):
                     timeout=aiohttp.ClientTimeout(total=float(api_timeout)),
                 )
 
-            response: Optional[aiohttp.ClientResponse] = None
             try:
                 response = await _gemini_api_request()
                 if gui_handler and hasattr(gui_handler, "update_progress_indicator"):

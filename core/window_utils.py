@@ -20,7 +20,7 @@ def get_active_window_title() -> str:
     logger.debug(f"[{current_thread_name}] 尝试获取活动窗口标题...")
     # 首选跨平台的 pyautogui 实现
     try:
-        import pyautogui
+        import pyautogui  # type: ignore[import-untyped]
 
         win = pyautogui.getActiveWindow()  # type: ignore
         if win is not None and hasattr(win, "title"):

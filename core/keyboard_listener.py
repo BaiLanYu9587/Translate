@@ -10,7 +10,7 @@ import logging
 import platform
 import threading
 from typing import Optional, Tuple, Any
-from pynput import keyboard
+from pynput import keyboard  # type: ignore[import-untyped]
 
 # 导入常量
 
@@ -153,7 +153,7 @@ class KeyboardListener:
             Optional[Tuple[int, int]]: 鼠标坐标(x, y)，如果获取失败则返回None
         """
         try:
-            import pyautogui
+            import pyautogui  # type: ignore[import-untyped]
 
             pos = pyautogui.position()
             return int(pos.x), int(pos.y)
@@ -358,8 +358,8 @@ class KeyboardListener:
 
     def stop(self) -> None:
         """停止键盘监听"""
+        current_thread_name = threading.current_thread().name
         try:
-            current_thread_name = threading.current_thread().name
             logger.debug(f"[{current_thread_name}] 尝试停止键盘监听器...")
             if hasattr(self, "listener") and self.listener:
                 if self._get_listener_running_status():

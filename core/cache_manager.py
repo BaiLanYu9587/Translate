@@ -198,12 +198,12 @@ class CacheManager:
         try:
             # 1. 先存储到内存
             self.memory_cache.put(forward_key, translation)
-            if reverse_data:
+            if reverse_data and reverse_key:
                 self.memory_cache.put(reverse_key, text)
 
             # 2. 再存储到数据库
             self._save_to_database(forward_key, translation, current_time)
-            if reverse_data:
+            if reverse_data and reverse_key:
                 self._save_to_database(reverse_key, text, current_time)
 
             logger.debug("[缓存存储] 正向+反向双向存储完成，包含磁盘持久化")

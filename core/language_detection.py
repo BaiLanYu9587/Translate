@@ -3,17 +3,17 @@
 提供多种语言检测算法和决策逻辑
 """
 
-import regex
+import regex  # type: ignore[import-untyped]
 import logging
 import os
 import threading
 import json
 from collections import OrderedDict
 from typing import Dict, List, Optional, Any, TypedDict
-import xxhash
-import pycld2 as cld2
+import xxhash  # type: ignore[import-untyped]
+import pycld2 as cld2  # type: ignore[import-untyped]
 
-import yaml
+import yaml  # type: ignore[import-untyped]
 from .config_management import (
     get_config_file_path,
     get_mode_config_file_path,
@@ -103,7 +103,7 @@ def compile_language_patterns(
     Returns:
         Dict[str, Dict[str, Any]]: 编译后的模式字典
     """
-    import regex
+    import regex  # type: ignore[import-untyped]
 
     compiled_patterns: Dict[str, Dict[str, Any]] = {}
 

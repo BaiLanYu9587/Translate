@@ -86,7 +86,7 @@ def clean_illegal_chars(
         return text
 
     try:
-        return regex.sub(illegal_pattern, "", text)
+        return regex.sub(illegal_pattern, "", text)  # type: ignore[no-any-return]
     except regex.error as e:
         current_thread_name = threading.current_thread().name
         logger.error(

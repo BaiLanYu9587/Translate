@@ -10,10 +10,10 @@ import atexit
 import queue
 from typing import Optional, Dict, Any
 import logging
-import pyautogui
-from PyQt6.QtWidgets import QApplication, QWidget
-from PyQt6.QtCore import Qt, QTimer, pyqtSlot, QMetaObject, Q_ARG
-from PyQt6.QtGui import QPainter, QColor, QPen
+import pyautogui  # type: ignore[import-untyped]
+from PyQt6.QtWidgets import QApplication, QWidget  # type: ignore[import-untyped]
+from PyQt6.QtCore import Qt, QTimer, pyqtSlot, QMetaObject, Q_ARG  # type: ignore[import-untyped]
+from PyQt6.QtGui import QPainter, QColor, QPen  # type: ignore[import-untyped]
 
 logger = logging.getLogger(__name__)
 
