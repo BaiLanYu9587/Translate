@@ -16,7 +16,7 @@ os.chdir(PROJECT_ROOT)
 
 # 导入版本号
 sys.path.insert(0, str(PROJECT_ROOT))
-from core.constants import APP_VERSION
+from core.constants import APP_VERSION  # noqa: E402
 
 # 定义路径和名称（使用英文）
 DIST_PATH = PROJECT_ROOT / "dist"
@@ -94,7 +94,7 @@ def run_pyinstaller(spec_name, entry_point, app_name, add_data_list, hidden_impo
     print(f"执行命令: {' '.join(cmd[:5])} ... (完整命令已省略)")
     
     try:
-        result = subprocess.run(cmd, check=True, capture_output=False)
+        subprocess.run(cmd, check=True, capture_output=False)
         print(f"✓ {app_name} 打包成功！")
         return True
     except subprocess.CalledProcessError as e:
@@ -131,7 +131,8 @@ def build_main_app():
 def build_api_tool():
     """打包API加解密工具"""
     # 检查图标文件
-    icon_to_use = ICON_PATH if ICON_PATH.exists() else PROJECT_ROOT / "图标.ico"
+    if not ICON_PATH.exists():
+        print(f"警告: 图标文件不存在: {ICON_PATH}")
     
     add_data = [
         "utils/api_crypto.py;utils/",
@@ -205,7 +206,7 @@ def main():
     print(f"成功: {success_count}/{total_count}")
     
     if success_count == total_count:
-        print(f"\n✓ 所有程序打包成功！")
+        print("\n✓ 所有程序打包成功！")
         print(f"输出目录: {DIST_PATH}")
         
         # 列出生成的文件
@@ -216,7 +217,7 @@ def main():
                 size_mb = exe_file.stat().st_size / (1024 * 1024)
                 print(f"  - {exe_file.name} ({size_mb:.2f} MB)")
     else:
-        print(f"\n✗ 部分程序打包失败")
+        print("\n✗ 部分程序打包失败")
         sys.exit(1)
 
 
