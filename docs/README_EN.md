@@ -1,6 +1,6 @@
 # Multilingual Translator
 
-[English](README.md) | [中文](docs/README_ZH.md) | [日本語](docs/README_JA.md) | [Français](docs/README_FR.md) | [Deutsch](docs/README_DE.md) | [한국어](docs/README_KO.md)
+[English](../README.md) | [中文](README_ZH.md) | [日本語](README_JA.md) | [Français](README_FR.md) | [Deutsch](README_DE.md) | [한국어](README_KO.md)
 
 ---
 
