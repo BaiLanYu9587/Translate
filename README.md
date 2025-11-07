@@ -42,13 +42,13 @@ AI 驱动的桌面翻译工具，支持多API提供商，通过全局快捷键�
 ## 🛠️ 环境与安装
 
 - **系统**: Windows 10/11 (x64)
-- **依赖**: Python 3.12+, Poetry
+- **依赖**: Python 3.11 或 3.12, Poetry
 
 **快速开始:**
 
 ```bash
 # 1. 安装依赖
-# 建议使用 Python 3.12 环境
+# 推荐使用 Python 3.11 或 3.12 环境
 pip install poetry
 poetry install
 poetry shell
