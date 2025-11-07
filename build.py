@@ -18,11 +18,11 @@ os.chdir(PROJECT_ROOT)
 sys.path.insert(0, str(PROJECT_ROOT))
 from core.constants import APP_VERSION
 
-# 定义路径和名称
-DIST_PATH = PROJECT_ROOT / "编译"
-APP_NAME = f"多语言互译器v{APP_VERSION}"
-API_TOOL_NAME = f"API加解密工具v{APP_VERSION}"
-ICON_PATH = PROJECT_ROOT / "图标.ico"
+# 定义路径和名称（使用英文）
+DIST_PATH = PROJECT_ROOT / "dist"
+APP_NAME = f"MultiLangTranslator-v{APP_VERSION}"
+API_TOOL_NAME = f"APIKeyTool-v{APP_VERSION}"
+ICON_PATH = PROJECT_ROOT / "icon.ico"
 
 print("=" * 60)
 print(f"开始打包 v{APP_VERSION}")
@@ -74,8 +74,10 @@ def run_pyinstaller(spec_name, entry_point, app_name, add_data_list, hidden_impo
     for mod in collect_submodules:
         cmd.extend(["--collect-submodules", mod])
     
-    # 添加图标
-    cmd.extend(["--icon", str(ICON_PATH)])
+    # 添加图标（检查文件是否存在）
+    icon_to_use = ICON_PATH if ICON_PATH.exists() else PROJECT_ROOT / "图标.ico"
+    if icon_to_use.exists():
+        cmd.extend(["--icon", str(icon_to_use)])
     
     # 添加输出名称
     cmd.extend(["--name", app_name])
@@ -106,10 +108,13 @@ def run_pyinstaller(spec_name, entry_point, app_name, add_data_list, hidden_impo
 
 def build_main_app():
     """打包主程序"""
+    # 检查图标文件，如果不存在则尝试使用原中文名
+    icon_to_use = ICON_PATH if ICON_PATH.exists() else PROJECT_ROOT / "图标.ico"
+    
     add_data = [
         "core/*;core/",
         "utils/*;utils/",
-        f"{ICON_PATH};.",
+        f"{icon_to_use};.",
         "openssl_dll/*;openssl_dll/"
     ]
     
@@ -125,6 +130,9 @@ def build_main_app():
 
 def build_api_tool():
     """打包API加解密工具"""
+    # 检查图标文件
+    icon_to_use = ICON_PATH if ICON_PATH.exists() else PROJECT_ROOT / "图标.ico"
+    
     add_data = [
         "utils/api_crypto.py;utils/",
         "openssl_dll/*;openssl_dll/"
