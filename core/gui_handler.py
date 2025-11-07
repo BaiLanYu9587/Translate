@@ -540,7 +540,7 @@ class GUIHandler:
                 )
                 return
             # 使用队列连接在Qt主线程执行 quit
-            from PyQt6.QtCore import QCoreApplication
+            from PyQt6.QtCore import QCoreApplication  # type: ignore[import-untyped]
 
             QMetaObject.invokeMethod(
                 QCoreApplication.instance(), "quit", Qt.ConnectionType.QueuedConnection

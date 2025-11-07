@@ -6,7 +6,7 @@
 from typing import Optional
 
 # 应用程序版本 - 硬编码
-APP_VERSION = "2.2.4"
+APP_VERSION = "2.2.5"
 
 # 通用提示词模板 - 硬编码
 UNIVERSAL_PROMPT_TEMPLATE = """

@@ -56,6 +56,7 @@ class AnthropicProvider(ApiProvider):
 
         logger.debug(f"开始调用Anthropic API，模型: {model_id}, 重试: {is_retry}")
 
+        response: Optional[aiohttp.ClientResponse] = None
         try:
             url = self.api_base
             logger.debug(f"API请求URL: {url}")
@@ -129,7 +130,6 @@ class AnthropicProvider(ApiProvider):
                     timeout=aiohttp.ClientTimeout(total=float(api_timeout)),
                 )
 
-            response: Optional[aiohttp.ClientResponse] = None
             try:
                 response = await _anthropic_api_request()
                 if gui_handler and hasattr(gui_handler, "update_progress_indicator"):
@@ -242,15 +242,13 @@ class AnthropicProvider(ApiProvider):
 
         except asyncio.TimeoutError:
             error_details = ""
-            # 检查 response 对象是否已创建且包含状态信息
-            if 'response' in locals() and response and hasattr(response, "status"):
+            if response and hasattr(response, "status"):
                 error_details = f"状态码: {response.status}, 响应头: {response.headers}"
                 logger.error(
                     f"调用Anthropic API时发生超时。可能是在读取响应体时。{error_details}"
                 )
                 # 尝试安全地读取部分响应文本以供调试
                 try:
-                    # 使用 response.content 而不是 response.text()，并设置一个小的读取限制
                     partial_content = await response.content.read(1024)
                     decoded_partial = partial_content.decode("utf-8", errors="ignore")
                     logger.error(f"API返回的部分内容 (前1KB): {decoded_partial}")
